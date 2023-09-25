@@ -1,0 +1,5 @@
+db.sqlite3
+auctions/__pycache__/
+commerce/__pycache__/
+Pipfile
+Pipfile.lock

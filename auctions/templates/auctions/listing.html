@@ -1,0 +1,150 @@
+{% extends "auctions/layout.html" %} {% block body %}
+
+<h2>Listing: {{item.title}}</h2>
+
+<div style="height: 100px; margin-left: 20px">
+  {% if user.is_authenticated %}
+    <div class="row">
+        {% if not item.is_active %}
+            <div class="alert alert-info" role="alert">Auction Ended</div>
+        {% endif %}
+        {% if user == item.user and item.is_active %}
+            <a class="btn btn-primary" href="{% url 'end' item.id %}">End auction</a>
+        {% endif %} 
+        {%if user != item.user and item.is_active %} 
+            {% if watch %}
+                <a class="btn btn-primary" href="{% url 'remove' item.id %}"
+                >Remove from watchlist</a
+                >
+            {% else %}
+                <a class="btn btn-primary" href="{% url 'addwatch' item.id %}"
+                >Add to watchlist</a
+                >
+            {% endif %}
+        {% endif %}
+    </div>
+  {% endif %}
+</div>
+
+<div class="col">
+  <div class="col">
+    {%if not item.is_active and user == item.bidwinner%}
+    <div class="alert alert-success" role="alert">
+      <p>Congratulations {{ item.bidwinner }} on winning the bid</p>
+    </div>
+    {%endif%}
+    <div class="card mx-3 my-3" style="width: auto; max-width: 900px">
+      <img
+        src="{{item.image}}"
+        class="card-img-top"
+        style="object-fit: contain"
+        alt="item.title"
+        height="500px"
+      />
+      <div
+        class="container text-left"
+        style="background-color: rgba(0, 0, 0, 0.1)"
+      >
+        <p
+          style="
+            margin: revert;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold',
+              sans-serif;
+          "
+        >
+          {{item.description}}
+        </p>
+      </div>
+      <h3>Price:${{item.price}}</h3>
+    {% if item.is_active %}
+
+      <form action="{% url 'bid' item.id %}" method="POST">
+        {%csrf_token%}
+        <div class="mb-3">
+          {%if not user.is_authenticated%}
+          <label for="" class="form-label">Login to place a bid</label>
+          {%else%}
+          <label for="" class="form-label">Place your Bid</label>
+          {%endif%} 
+          {%if user.is_authenticated%}
+          <input
+            type="number"
+            step="0.01"
+            class="form-control"
+            name="bid"
+            min="{{item.price}}"
+            placeholder="Bid"
+            value="{{item.price}}"
+          />
+        </div>
+        {%if user != item.user%}
+        <button
+          type="submit"
+          style="
+            position: absolute;
+            right: 0px;
+            width: 200px;
+            border: 3px solid #73ad21;
+            padding: 10px;
+          "
+          class="btn btn-primary"
+        >
+          Place your Bid
+        </button>
+        {%endif%}
+      </form>
+      {%endif%}
+
+        {%if user == item.user%}
+        <p>last bid placed by {{item.bidwinner}}</p>
+        {%endif%}
+
+    {%endif%}
+    </div>
+
+    
+    {%if not item.is_active%}
+    <div class="alert alert-success" role="alert">
+      <p>the bid was won by {{ item.bidwinner }}</p>
+    </div>
+    {%endif%}
+  </div>
+</div>
+<div class="row" style="margin-top: 30px">
+  <div class="col">
+    <div class="card-body">
+      <hr />
+      <h3>Details:</h3>
+      <ul>
+        <li>Listed by: {{item.user}}</li>
+        <li>Category: {{item.category}}</li>
+      </ul>
+    </div>
+    <div class="card-body">
+      <hr />
+      <h3>Comments</h3>
+      <ul class="list-group">
+        {% for comment in comments %}
+        <li class="list-group-item pb-3 pt-3">
+          <h5 class="card-title">comment by {{ comment.user }}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">{{ comment.date }}</h6>
+          <p class="card-text">{{ comment.text }}</p>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <hr />
+    {% if user.is_authenticated %}
+    <div class="card-body">
+      <div class="form-group">
+        <form method="POST" action="{% url 'comment' item.id %}">
+          {% csrf_token %}
+          <div class="mb-3">{{ form.as_div }}</div>
+          <button type="submit" class="btn btn-primary">Add Comment</button>
+        </form>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

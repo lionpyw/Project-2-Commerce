@@ -1,0 +1,46 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<h2>Active Listings</h2>
+
+<div class= "row mx-3 my-4">
+    {%for item in items%}
+            <div class="card mx-3 my-4" style="width:auto; max-width:300px">
+                <a href="{%url 'listing' item.id%}">
+                    <img src='{{item.image}}' class="card-img-top" alt="item.title" height="250">
+                </a>
+                <div class="container text-center" style="">
+                    <h3><a href = "{%url 'listing' item.id%}">
+                            {{item.title}}
+                        </a>
+                    </h3>
+                    <p>Price:${{item.price}}</p>
+                    <p>{{item.description}}</p>
+                </div>
+            </div>
+    {% endfor %}
+</div>
+<hr/>
+{% if bought %}
+    <h3>Bought Items</h3>
+<div class= "row mx-3 my-4">
+    {%for item in buys%}
+            <div class="card mx-3 my-4" style="width:auto; max-width:300px">
+                <a href="{%url 'listing' item.id%}">
+                    <img src='{{item.image}}' class="card-img-top" alt="{{item.title}}" height="250">
+                </a>
+                <div class="container text-center" style="">
+                    <h3><a href = "{%url 'listing' item.id%}">
+                            {{item.title}}
+                        </a>
+                    </h3>
+                    <p>Price:${{item.price}}</p>
+                    <p>{{item.description}}</p>
+                </div>
+            </div>
+    {% endfor %}
+</div>
+{%endif%}      
+
+{% endblock %}
