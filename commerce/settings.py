@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "auctions"
+    "auctions",
+    "core"
 ]
 
 MIDDLEWARE = [
@@ -121,4 +122,4 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTH_USER_MODEL = 'auctions.User'
+AUTH_USER_MODEL = 'core.User'
