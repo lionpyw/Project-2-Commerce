@@ -1,11 +1,13 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from .forms import CreateAuctionForm, CommentFieldForm
-from .models import User, AuctionListings,Category, Comments,Bid
+from .models import AuctionListings,Category, Comments,Bid
+
+User = get_user_model()
 
 def index(request):
     listing = AuctionListings.objects.filter(is_active=True).all()

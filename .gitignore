@@ -1,5 +1,6 @@
 db.sqlite3
-auctions/__pycache__/
-commerce/__pycache__/
+*/__pycache__/
 Pipfile
 Pipfile.lock
+vauct/
+*/migrations/
