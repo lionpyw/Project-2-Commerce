@@ -1,26 +1,21 @@
-{%extends "auctions/layout.html "%}
-
-{% block body %}
+{%extends "auctions/layout.html "%} {% block body %}
 
 <h2 class="pb-2 border-bottom">Choose Category</h2>
 <div class="b-example-divider"></div>
 
-
 {%for cat in category%}
-  <ul>
-   <li>   
+<ul>
+  <li>
     <div class="col d-flex align-items-start">
       <div>
-        <h3 class="fs-2 text-body-emphasis">{{cat.title}}</h3>
-        <p>All the latest trendy material at amazing prices related to this category</p>
-        <a href="{% url 'category' cat.title %}">
-           Check Out!
-        </a>
+        <h3 class="fs-2 text-body-emphasis">
+          <a href="{% url 'category' cat.title %}">{{cat.title}}</a>
+        </h3>
+        <p>
+          All goods at amazing prices related to this category
+        </p>
       </div>
     </div>
-   </li>
-  </ul>
-{% endfor %}
-
-
-{%endblock%}
+  </li>
+</ul>
+{% endfor %} {%endblock%}

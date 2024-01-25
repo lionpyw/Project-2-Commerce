@@ -4,25 +4,34 @@
 
 <div style="height: 100px; margin-left: 20px">
   {% if user.is_authenticated %}
-    <div class="row">
-        {% if not item.is_active %}
-            <div class="alert alert-info" role="alert">Auction Ended</div>
-        {% endif %}
-        {% if user == item.user and item.is_active %}
-            <a class="btn btn-primary" href="{% url 'end' item.id %}">End auction</a>
-        {% endif %} 
-        {%if user != item.user and item.is_active %} 
-            {% if watch %}
-                <a class="btn btn-primary" href="{% url 'remove' item.id %}"
-                >Remove from watchlist</a
-                >
-            {% else %}
-                <a class="btn btn-primary" href="{% url 'addwatch' item.id %}"
-                >Add to watchlist</a
-                >
-            {% endif %}
-        {% endif %}
-    </div>
+  <div class="row">
+    {% if not item.is_active %}
+    <div class="alert alert-info" role="alert">Auction Ended</div>
+    {% endif %}
+    {% if user == item.user and item.is_active %}
+    <form method="POST" id="end-auction" action="{% url 'listing' item.id %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">
+      End auction
+      </button>
+    </form>
+    {% endif %}
+    {%if user != item.user and item.is_active %} {% if watch %}
+    <form method="POST" id="rem-watch" action="{% url 'watch' item.id %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-warning">
+      Remove from watchlist
+      </button>
+    </form>
+    {% else %}
+    <form method="GET" id="add-watch" action="{% url 'watch' item.id %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary">
+        Add to watchlist
+      </button>
+    </form>
+    {% endif %} {% endif %}
+  </div>
   {% endif %}
 </div>
 
@@ -56,7 +65,7 @@
         </p>
       </div>
       <h3>Price:${{item.price}}</h3>
-    {% if item.is_active %}
+      {% if item.is_active %}
 
       <form action="{% url 'bid' item.id %}" method="POST">
         {%csrf_token%}
@@ -65,8 +74,7 @@
           <label for="" class="form-label">Login to place a bid</label>
           {%else%}
           <label for="" class="form-label">Place your Bid</label>
-          {%endif%} 
-          {%if user.is_authenticated%}
+          {%endif%} {%if user.is_authenticated%}
           <input
             type="number"
             step="0.01"
@@ -93,16 +101,11 @@
         </button>
         {%endif%}
       </form>
-      {%endif%}
-
-        {%if user == item.user%}
-        <p>last bid placed by {{item.bidwinner}}</p>
-        {%endif%}
-
-    {%endif%}
+      {%endif%} {%if user == item.user%}
+      <p>last bid placed by {{item.bidwinner}}</p>
+      {%endif%} {%endif%}
     </div>
 
-    
     {%if not item.is_active%}
     <div class="alert alert-success" role="alert">
       <p>the bid was won by {{ item.bidwinner }}</p>
@@ -137,7 +140,7 @@
     {% if user.is_authenticated %}
     <div class="card-body">
       <div class="form-group">
-        <form method="POST" action="{% url 'comment' item.id %}">
+        <form method="POST" action="{% url 'comment' item.id %}" id="comment">
           {% csrf_token %}
           <div class="mb-3">{{ form.as_div }}</div>
           <button type="submit" class="btn btn-primary">Add Comment</button>
