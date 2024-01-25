@@ -1,10 +1,8 @@
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.utils.decorators import method_decorator
 from django.views.generic.edit import FormView
 from rest_framework import status, permissions
 from rest_framework.decorators import permission_classes
@@ -16,7 +14,9 @@ from .models import AuctionListings,Category, Comments,Bid
 
 User = get_user_model()
 
-class AuctionListing(APIView):
+class AuctionListing(APIView):  
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "auctions/index.html"
 
     def get(self, request):
         listing = AuctionListings.objects.filter(is_active=True).all()
@@ -25,12 +25,12 @@ class AuctionListing(APIView):
             bought = False
             if expired.count() > 0:
                 bought = True
-            return render(request, "auctions/index.html", {
+            return Response({
                 'items' : listing,
                 'buys' : expired,
                 'bought' : bought
             })
-        return render(request, "auctions/index.html", {
+        return Response({
                 'items' : listing
             })
 

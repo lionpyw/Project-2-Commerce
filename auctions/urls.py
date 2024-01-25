@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views, cbviews
+from . import views
 
 urlpatterns = [
     path("", views.AuctionListing.as_view(), name="index"),
