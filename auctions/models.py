@@ -9,7 +9,7 @@ class Category(models.Model):
 
 class AuctionListings(models.Model):
     title = models.CharField(max_length=32)
-    slug = models.SlugField(default='-')
+    slug = models.SlugField()
     description = models.TextField(null=True, blank=True)
     image = models.URLField()
     category = models.ForeignKey(Category, on_delete=models.PROTECT, null=True, blank=True,

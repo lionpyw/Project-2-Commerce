@@ -3,6 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.views.generic.edit import FormView
 from rest_framework import status, permissions
 from rest_framework.decorators import permission_classes
@@ -19,7 +20,9 @@ class AuctionListing(APIView):
     template_name = "auctions/index.html"
 
     def get(self, request):
-        listing = AuctionListings.objects.filter(is_active=True).all()
+        listing = AuctionListings.objects.filter(is_active=True).all()\
+        .select_related("user")\
+        .select_related("bidwinner")
         if self.request.user.is_authenticated:
             expired = AuctionListings.objects.filter(is_active=False, bidwinner= self.request.user)
             bought = False
@@ -34,7 +37,7 @@ class AuctionListing(APIView):
                 'items' : listing
             })
 
-    @permission_classes([permissions.IsAuthenticated])
+    @method_decorator(permission_classes([permissions.IsAuthenticated]))
     def post(self,request):
         form = CreateAuctionForm(request.POST)
         if form.is_valid():
@@ -65,7 +68,7 @@ class AuctionDetail(APIView):
             'form' : form
         })
     
-    @permission_classes([permissions.IsAuthenticated])
+    @method_decorator(permission_classes([permissions.IsAuthenticated]))
     def post(self, request, pk):
         listing=AuctionListings.objects.get(pk=pk)
         if listing.user == request.user:
@@ -131,7 +134,7 @@ class Comment(APIView):
                 return HttpResponseRedirect(reverse("listing",args=(pk, )))
             
 class BidView(APIView):
-    @permission_classes([permissions.IsAuthenticated])
+    @method_decorator(permission_classes([permissions.IsAuthenticated]))
     def post(self, request, pk):
         listing=AuctionListings.objects.get(pk=pk)
         bidValue=float(self.request.POST['bid'])
